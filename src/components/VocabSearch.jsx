@@ -1,11 +1,13 @@
 import { useState } from "react";
 import "./VocabSearch.css";
+import WordListModal from "./WordListModal";
 
 export default function VocabSearch() {
     const [word, setWord] = useState("");
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [showModal, setShowModal] = useState(false);
 
     const handleSearch = async () => {
         if (!word.trim()) return;
@@ -16,7 +18,7 @@ export default function VocabSearch() {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/api/words/${word}/relations`
+                `http://localhost:8080/api/words/${word}`
             );
 
             if (!response.ok) {
@@ -35,7 +37,7 @@ export default function VocabSearch() {
     return (
         <div className="container">
             <div className="card">
-                <h2 className="title">📘 Vocabulary App</h2>
+                <h2 className="title">📘 VocabView</h2>
 
                 <div className="search-box">
                     <input
@@ -53,61 +55,49 @@ export default function VocabSearch() {
 
                 {result && (
                     <div className="result">
-                        <h3 className="word-title">{result.word}</h3>
-
                         <div className="tables">
-
-                            <div className="table-box">
-                                <h4>Synonyms</h4>
-                                {result.synonyms.length > 0 ? (
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Synonyms</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {result.synonyms.map((syn, index) => (
-                                                <tr key={syn}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{syn}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                ) : (
-                                    <p className="empty">No synonyms</p>
-                                )}
-                            </div>
-
-                            <div className="table-box">
-                                <h4>Antonyms</h4>
-                                {result.antonyms.length > 0 ? (
-                                    <table className="antonym">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Antonyms</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {result.antonyms.map((ant, index) => (
-                                                <tr key={ant}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{ant}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                ) : (
-                                    <p className="empty">No antonyms</p>
-                                )}
-                            </div>
+                            <Table title="Synonyms" data={result.synonyms} />
+                            <Table title="Antonyms" data={result.antonyms} />
                         </div>
                     </div>
                 )}
             </div>
+            <button className="secondary" onClick={() => setShowModal(true)}>
+                📋 View All Words
+            </button>
+
+            <WordListModal
+                open={showModal}
+                onClose={() => setShowModal(false)}
+            />
+        </div>
+    );
+}
+
+function Table({ title, data }) {
+    return (
+        <div className="table-box">
+            <h4>{title}</h4>
+            {data.length > 0 ? (
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>{title}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map((item, index) => (
+                            <tr key={item}>
+                                <td>{index + 1}</td>
+                                <td>{item}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <p className="empty">No {title.toLowerCase()}</p>
+            )}
         </div>
     );
 }

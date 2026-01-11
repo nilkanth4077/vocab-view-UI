@@ -3,104 +3,78 @@
 }
 
 body {
+    margin: 0;
+    font-family: Arial, sans-serif;
     background: #f4f6f8;
 }
 
 .container {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 20px;
+    padding: 16px;
+    max-width: 900px;
+    margin: auto;
 }
 
 .card {
-    width: 100%;
-    max-width: 900px;
-    background: white;
-    border-radius: 10px;
+    background: rgb(18, 16, 16);
     padding: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .title {
     text-align: center;
-    margin-bottom: 20px;
-    color: black;
+    margin-bottom: 16px;
 }
 
 .search-box {
     display: flex;
-    gap: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .search-box input {
     flex: 1;
     padding: 10px;
-    font-size: 16px;
 }
 
-.search-box button {
+.search-box button,
+.primary {
     padding: 10px 16px;
-    font-size: 16px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
     cursor: pointer;
 }
 
-.info {
-    text-align: center;
-}
-
-.error {
-    color: red;
-    text-align: center;
-}
-
-.result {
-    margin-top: 25px;
-}
-
-.word-title {
-    text-align: center;
-    text-transform: capitalize;
-}
-
 .tables {
-    display: flex;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
     margin-top: 20px;
 }
 
-/* Table box */
+@media (min-width: 700px) {
+    .tables {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 .table-box {
-    flex: 1;
+    overflow-x: auto;
 }
 
-.table-box h4 {
-    text-align: center;
-    margin-bottom: 8px;
-}
-
-/* Tables */
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #242222;
 }
 
-table th,
-table td {
-    border: 1px solid #ddd;
+th,
+td {
     padding: 8px;
-    text-align: center;
-}
-
-table th {
-    background-color: #100f0f;
-}
-
-/* Antonym table color */
-table.antonym th {
-    background-color: #100f0f;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
 }
 
 .empty {
@@ -108,17 +82,22 @@ table.antonym th {
     color: #888;
 }
 
-/* 📱 Mobile Responsive */
-@media (max-width: 768px) {
-    .tables {
-        flex-direction: column;
-    }
+.form-grid {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 12px;
+}
 
-    .search-box {
-        flex-direction: column;
-    }
+.error {
+    color: #dc2626;
+    text-align: center;
+}
 
-    .search-box button {
-        width: 100%;
-    }
+.success {
+    color: #16a34a;
+    text-align: center;
+}
+
+.info {
+    text-align: center;
 }
