@@ -18,7 +18,7 @@ export default function VocabSearch() {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/api/words/${word}`
+                `https://vocab-view-springboot.onrender.com/api/words/${word}`
             );
 
             if (!response.ok) {

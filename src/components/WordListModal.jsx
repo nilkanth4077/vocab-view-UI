@@ -11,7 +11,7 @@ export default function WordListModal({ open, onClose }) {
     useEffect(() => {
         if (!open) return;
 
-        fetch("http://localhost:8080/api/words")
+        fetch("https://vocab-view-springboot.onrender.com/api/words")
             .then(res => res.json())
             .then(data => setWords(data))
             .catch(() => setWords([]));
