@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./VocabSearch.css";
+import { BASE_URL } from "../Api";
 
 export function AddWord() {
     const [form, setForm] = useState({
@@ -26,7 +27,7 @@ export function AddWord() {
         setMessage("");
 
         try {
-            const response = await fetch("https://vocab-view-springboot.onrender.com/api/words", {
+            const response = await fetch(`${BASE_URL}/words`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

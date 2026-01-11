@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./WordModal.css";
+import { BASE_URL } from "../Api";
 
 export default function WordListModal({ open, onClose }) {
     const [words, setWords] = useState([]);
@@ -11,7 +12,7 @@ export default function WordListModal({ open, onClose }) {
     useEffect(() => {
         if (!open) return;
 
-        fetch("https://vocab-view-springboot.onrender.com/api/words")
+        fetch(`${BASE_URL}/words`)
             .then(res => res.json())
             .then(data => setWords(data))
             .catch(() => setWords([]));

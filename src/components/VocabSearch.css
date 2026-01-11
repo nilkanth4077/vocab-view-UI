@@ -101,3 +101,33 @@ td {
 .info {
     text-align: center;
 }
+
+.autocomplete {
+    position: relative;
+}
+
+.suggestions {
+    position: absolute;
+    top: 44px;
+    left: 0;
+    right: 0;
+    background: #272525;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 20;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.suggestions li {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestions li:hover {
+    background: #020202;
+}
