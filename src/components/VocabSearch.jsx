@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import "./VocabSearch.css";
 import WordListModal from "./WordListModal";
 import { BASE_URL } from "../Api";
 
@@ -59,22 +58,33 @@ export default function VocabSearch() {
     };
 
     return (
-        <div className="container">
-            <div className="card">
-                <h2 className="title">📘 VocabView</h2>
+        <div className="max-w-4xl mx-auto p-4 rounded-xl border-2 border-neutral-700">
+            <div className="bg-neutral-900 rounded-xl shadow-xl p-5">
+                <h2 className="text-center text-fuchsia-50 text-2xl font-bold mb-4">
+                    📘 VocabView
+                </h2>
 
-                <div className="search-box autocomplete">
+                {/* Search */}
+                <div className="relative flex flex-wrap gap-2">
                     <input
                         type="text"
                         placeholder="Enter a word..."
                         value={word}
                         onChange={(e) => setWord(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                        className="flex-1 px-3 py-2 rounded-md bg-neutral-800 border border-neutral-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <button onClick={() => handleSearch()}>Search</button>
 
+                    <button
+                        onClick={() => handleSearch()}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition"
+                    >
+                        Search
+                    </button>
+
+                    {/* Suggestions */}
                     {suggestions.length > 0 && (
-                        <ul className="suggestions">
+                        <ul className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 rounded-lg shadow-lg max-h-56 overflow-y-auto z-20">
                             {suggestions.map((s) => (
                                 <li
                                     key={s}
@@ -82,6 +92,7 @@ export default function VocabSearch() {
                                         setWord(s);
                                         handleSearch(s);
                                     }}
+                                    className="px-4 py-2 cursor-pointer bg-neutral-800 hover:bg-neutral-700 text-white border-b border-neutral-700 last:border-none"
                                 >
                                     {s}
                                 </li>
@@ -90,22 +101,33 @@ export default function VocabSearch() {
                     )}
                 </div>
 
-                {loading && <p className="info">Loading...</p>}
-                {error && <p className="error">{error}</p>}
+                {/* Status */}
+                {loading && (
+                    <p className="text-center text-gray-400 mt-3">Loading...</p>
+                )}
 
+                {error && (
+                    <p className="text-center text-red-500 mt-3">{error}</p>
+                )}
+
+                {/* Result */}
                 {result && (
-                    <div className="result">
-                        <div className="tables">
-                            <Table title="Synonyms" data={result.synonyms} />
-                            <Table title="Antonyms" data={result.antonyms} />
-                        </div>
+                    <div className="mt-6 grid grid-cols-2 gap-4">
+                        <Table title="Synonyms" data={result.synonyms} />
+                        <Table title="Antonyms" data={result.antonyms} />
                     </div>
                 )}
             </div>
 
-            <button className="secondary" onClick={() => setShowModal(true)}>
-                📋 View All Words
-            </button>
+            {/* Footer Button */}
+            <div className="mt-4 text-center">
+                <button
+                    className="text-sm text-blue-400 hover:underline"
+                    onClick={() => setShowModal(true)}
+                >
+                    📋 View All Words
+                </button>
+            </div>
 
             <WordListModal
                 open={showModal}
@@ -117,27 +139,33 @@ export default function VocabSearch() {
 
 function Table({ title, data }) {
     return (
-        <div className="table-box">
-            <h4>{title}</h4>
+        <div className="bg-neutral-800 rounded-lg p-3 overflow-x-auto">
+            <h4 className="font-semibold mb-2">{title}</h4>
+
             {data.length > 0 ? (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>{title}</th>
+                <table className="w-full text-sm border-collapse">
+                    {/* <thead>
+                        <tr className="border-b border-neutral-700">
+                            <th className="text-left py-1">#</th>
+                            <th className="text-left py-1">{title}</th>
                         </tr>
-                    </thead>
+                    </thead> */}
                     <tbody>
                         {data.map((item, index) => (
-                            <tr key={item}>
-                                <td>{index + 1}</td>
-                                <td>{item}</td>
+                            <tr
+                                key={item}
+                                className="border-b border-neutral-700 last:border-none"
+                            >
+                                <td className="py-1">{index + 1}</td>
+                                <td className="py-1">{item}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             ) : (
-                <p className="empty">No {title.toLowerCase()}</p>
+                <p className="text-center text-gray-400">
+                    No {title.toLowerCase()}
+                </p>
             )}
         </div>
     );
