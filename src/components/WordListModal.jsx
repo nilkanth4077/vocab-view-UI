@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../Api";
 
-export default function WordListModal({ open, onClose }) {
+export default function WordListModal({ open, onClose, loading }) {
     const [words, setWords] = useState([]);
     const [query, setQuery] = useState("");
     const [page, setPage] = useState(1);
@@ -54,31 +54,35 @@ export default function WordListModal({ open, onClose }) {
                 />
 
                 {/* Table */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-white border-collapse">
-                        <thead>
-                            <tr className="border-b border-neutral-700">
-                                <th className="py-2 px-3">Word</th>
-                                <th className="py-2 px-3">POS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {paginated.map((w) => (
-                                <tr
-                                    key={w.word}
-                                    className="border-b border-neutral-700 last:border-none hover:bg-neutral-800"
-                                >
-                                    <td className="py-2 px-3">{w.word}</td>
-                                    <td className="py-2 px-3">{w.partOfSpeech || "-"}</td>
+                {loading ? (
+                    <p className="text-center text-gray-400 mt-2">Loading...</p>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-white border-collapse">
+                            <thead>
+                                <tr className="border-b border-neutral-700">
+                                    <th className="py-2 px-3">Word</th>
+                                    <th className="py-2 px-3">POS</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {paginated.map((w) => (
+                                    <tr
+                                        key={w.word}
+                                        className="border-b border-neutral-700 last:border-none hover:bg-neutral-800"
+                                    >
+                                        <td className="py-2 px-3">{w.word}</td>
+                                        <td className="py-2 px-3">{w.partOfSpeech || "-"}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
 
-                    {paginated.length === 0 && (
-                        <p className="text-center text-gray-400 mt-2">No words found</p>
-                    )}
-                </div>
+                        {paginated.length === 0 && (
+                            <p className="text-center text-gray-400 mt-2">Loading...</p>
+                        )}
+                    </div>
+                )}
 
                 {/* Pagination */}
                 <div className="flex justify-center items-center gap-4 mt-2">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import WordListModal from "./WordListModal";
 import { BASE_URL } from "../Api";
+import ReviseModal from "./ReviseModal";
 
 export default function VocabSearch() {
     const [word, setWord] = useState("");
@@ -9,6 +10,24 @@ export default function VocabSearch() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [showModal, setShowModal] = useState(false);
+    const [wordsCache, setWordsCache] = useState([]);
+    const [wordData, setWordData] = useState(null);
+    const [showReviseModal, setShowReviseModal] = useState(false);
+    const [reviseLoading, setReviseLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchAllWords = async () => {
+            try {
+                const res = await fetch(`${BASE_URL}/words`);
+                const data = await res.json();
+                setWordsCache(data);
+            } catch (err) {
+                console.error("Failed to fetch words for cache", err);
+            }
+        };
+
+        fetchAllWords();
+    }, []);
 
     useEffect(() => {
         if (word.length < 2) {
@@ -54,6 +73,20 @@ export default function VocabSearch() {
             setError(err.message);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleRevise = async () => {
+        setReviseLoading(true);
+        try {
+            const res = await fetch(`${BASE_URL}/words/revise`);
+            const data = await res.json();
+            setWordData(data);
+            setShowReviseModal(true);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setReviseLoading(false);
         }
     };
 
@@ -120,19 +153,41 @@ export default function VocabSearch() {
             </div>
 
             {/* Footer Button */}
-            <div className="mt-4 text-center">
+            <div className="mt-4 flex justify-between items-center mx-4">
                 <button
-                    className="text-sm text-blue-400 hover:underline"
+                    className="py-2 px-6 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition"
                     onClick={() => setShowModal(true)}
                 >
                     📋 View All Words
+                </button>
+
+                <button
+                    className="py-2 px-6 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition flex items-center justify-center"
+                    onClick={handleRevise}
+                    disabled={reviseLoading}
+                >
+                    {reviseLoading ? (
+                        <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    ) : (
+                        "⏳ Revise"
+                    )}
                 </button>
             </div>
 
             <WordListModal
                 open={showModal}
                 onClose={() => setShowModal(false)}
+                loading={loading}
             />
+
+            <ReviseModal
+                showReviseModal={showReviseModal}
+                wordData={wordData}
+                reviseLoading={reviseLoading}
+                handleRevise={handleRevise}
+                setShowReviseModal={setShowReviseModal}
+            />
+
         </div>
     );
 }
