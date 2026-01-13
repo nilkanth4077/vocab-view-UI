@@ -20,6 +20,7 @@ export default function VocabSearch() {
             try {
                 const res = await fetch(`${BASE_URL}/words`);
                 const data = await res.json();
+                console.log("Fetched words for cache:", data);
                 setWordsCache(data);
             } catch (err) {
                 console.error("Failed to fetch words for cache", err);
@@ -125,7 +126,7 @@ export default function VocabSearch() {
                                         setWord(s);
                                         handleSearch(s);
                                     }}
-                                    className="px-4 py-2 cursor-pointer bg-neutral-800 hover:bg-neutral-700 text-white border-b border-neutral-700 last:border-none"
+                                    className="px-4 py-2 cursor-pointer bg-neutral-800 hover:bg-neutral-700 capitalize text-white border-b border-neutral-700 last:border-none"
                                 >
                                     {s}
                                 </li>
@@ -206,15 +207,17 @@ function Table({ title, data }) {
                         </tr>
                     </thead> */}
                     <tbody>
-                        {data.map((item, index) => (
-                            <tr
-                                key={item}
-                                className="border-b border-neutral-700 last:border-none"
-                            >
-                                <td className="py-1">{index + 1}</td>
-                                <td className="py-1">{item}</td>
-                            </tr>
-                        ))}
+                        {[...data]
+                            .sort((a, b) => a.localeCompare(b))
+                            .map((item, index) => (
+                                <tr
+                                    key={item}
+                                    className="border-b border-neutral-700 last:border-none"
+                                >
+                                    <td className="py-1">•</td>
+                                    <td className="py-1 capitalize">{item}</td>
+                                </tr>
+                            ))}
                     </tbody>
                 </table>
             ) : (

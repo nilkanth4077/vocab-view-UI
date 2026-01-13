@@ -23,12 +23,16 @@ export default function WordListModal({ open, onClose, loading }) {
         w.word.toLowerCase().includes(query.toLowerCase())
     );
 
-    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    const sorted = [...filtered].sort((a, b) =>
+        a.word.toLowerCase().localeCompare(b.word.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
     const start = (page - 1) * PAGE_SIZE;
-    const paginated = filtered.slice(start, start + PAGE_SIZE);
+    const paginated = sorted.slice(start, start + PAGE_SIZE);
 
     return (
-        <div className="fixed inset-0 bg-amber-50/30 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-amber-50/30 flex items-center justify-center z-50 px-4">
             <div className="bg-neutral-900 rounded-xl shadow-xl w-full max-w-2xl p-5 flex flex-col gap-4">
 
                 {/* Header */}
@@ -58,9 +62,9 @@ export default function WordListModal({ open, onClose, loading }) {
                     <p className="text-center text-gray-400 mt-2">Loading...</p>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-white border-collapse">
+                        <table className="w-full text-left text-white border-collapse border border-rounded-xl border-neutral-600">
                             <thead>
-                                <tr className="border-b border-neutral-700">
+                                <tr className="border-b border-neutral-700 bg-neutral-800">
                                     <th className="py-2 px-3">Word</th>
                                     <th className="py-2 px-3">POS</th>
                                 </tr>
@@ -71,8 +75,8 @@ export default function WordListModal({ open, onClose, loading }) {
                                         key={w.word}
                                         className="border-b border-neutral-700 last:border-none hover:bg-neutral-800"
                                     >
-                                        <td className="py-2 px-3">{w.word}</td>
-                                        <td className="py-2 px-3">{w.partOfSpeech || "-"}</td>
+                                        <td className="py-2 px-3 capitalize">{w.word}</td>
+                                        <td className="py-2 px-3 capitalize">{w.partOfSpeech || "-"}</td>
                                     </tr>
                                 ))}
                             </tbody>

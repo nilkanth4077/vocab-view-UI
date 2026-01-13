@@ -17,11 +17,11 @@ export default function ReviseModal({
                     ✖
                 </button>
 
-                <h2 className="text-2xl font-bold mb-2 text-white">
+                <h2 className="text-2xl font-bold mb-2 text-white capitalize">
                     {wordData.word}
                 </h2>
 
-                <p className="italic text-gray-300 mb-4">
+                <p className="italic text-gray-300 mb-4 capitalize">
                     {wordData.partOfSpeech || "-"}
                 </p>
 
@@ -30,16 +30,20 @@ export default function ReviseModal({
                     <div className="bg-neutral-800 p-3 rounded-lg">
                         <h3 className="font-semibold mb-2 text-white">Synonyms</h3>
                         {wordData.synonyms?.length ? (
-                            <table className="w-full text-sm">
-                                <tbody>
-                                    {wordData.synonyms.map((s, i) => (
-                                        <tr key={s} className="border-b border-neutral-700 last:border-none">
-                                            <td className="py-1 px-2">{i + 1}</td>
-                                            <td className="py-1 px-2">{s}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <div className="max-h-40 overflow-y-auto">
+                                <table className="w-full text-sm">
+                                    <tbody>
+                                        {[...wordData.synonyms]
+                                            .sort((a, b) => a.localeCompare(b))
+                                            .map((s, i) => (
+                                                <tr key={s} className="border-b border-neutral-700 last:border-none">
+                                                    <td className="py-1 px-2 w-6">•</td>
+                                                    <td className="py-1 px-2 capitalize">{s}</td>
+                                                </tr>
+                                            ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         ) : (
                             <p className="text-gray-400 text-center">No synonyms</p>
                         )}
@@ -49,16 +53,20 @@ export default function ReviseModal({
                     <div className="bg-neutral-800 p-3 rounded-lg">
                         <h3 className="font-semibold mb-2 text-white">Antonyms</h3>
                         {wordData.antonyms?.length ? (
-                            <table className="w-full text-sm">
-                                <tbody>
-                                    {wordData.antonyms.map((a, i) => (
-                                        <tr key={a} className="border-b border-neutral-700 last:border-none">
-                                            <td className="py-1 px-2">{i + 1}</td>
-                                            <td className="py-1 px-2">{a}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <div className="max-h-40 overflow-y-auto">
+                                <table className="w-full text-sm">
+                                    <tbody>
+                                        {[...wordData.antonyms]
+                                            .sort((a, b) => a.localeCompare(b))
+                                            .map((a, i) => (
+                                                <tr key={a} className="border-b border-neutral-700 last:border-none">
+                                                    <td className="py-1 px-2 w-6">•</td>
+                                                    <td className="py-1 px-2 capitalize">{a}</td>
+                                                </tr>
+                                            ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         ) : (
                             <p className="text-gray-400 text-center">No antonyms</p>
                         )}
