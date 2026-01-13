@@ -20,7 +20,6 @@ export default function VocabSearch() {
             try {
                 const res = await fetch(`${BASE_URL}/words`);
                 const data = await res.json();
-                console.log("Fetched words for cache:", data);
                 setWordsCache(data);
             } catch (err) {
                 console.error("Failed to fetch words for cache", err);
