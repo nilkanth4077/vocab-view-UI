@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../Api";
+import toast from "react-hot-toast";
 
 export function AddWord() {
     const [form, setForm] = useState({
         words: "",
         partOfSpeech: "",
+        meaning: "",
         synonymReference: "",
         antonymReference: ""
     });
@@ -15,6 +17,7 @@ export function AddWord() {
     const [cachedWords, setCachedWords] = useState([]);
     const [showSynRef, setShowSynRef] = useState(false);
     const [showAntRef, setShowAntRef] = useState(false);
+    const [showWordSuggestions, setShowWordSuggestions] = useState(false);
 
     useEffect(() => {
         fetch(`${BASE_URL}/words`)
@@ -32,6 +35,22 @@ export function AddWord() {
             .split(/[\n,]+/)
             .map(w => w.trim().toLowerCase())
             .filter(Boolean);
+    };
+
+    const getLastToken = (text) => {
+        const parts = text.split(/[\n,]+/);
+        return parts[parts.length - 1].trim();
+    };
+
+    const replaceLastToken = (text, newWord) => {
+        const parts = text.split(/([\n,]+)/); // keep delimiters
+        for (let i = parts.length - 1; i >= 0; i--) {
+            if (!/[\n,]+/.test(parts[i]) && parts[i].trim()) {
+                parts[i] = " " + newWord;
+                break;
+            }
+        }
+        return parts.join("").replace(/\s+/g, " ");
     };
 
     const handleSubmit = async () => {
@@ -54,6 +73,7 @@ export function AddWord() {
                 body: JSON.stringify({
                     words: wordsList,
                     partOfSpeech: form.partOfSpeech || null,
+                    meaning: form.meaning || null,
                     synonymReference: form.synonymReference || null,
                     antonymReference: form.antonymReference || null
                 })
@@ -64,20 +84,30 @@ export function AddWord() {
                 throw new Error(text || "Failed to add words");
             }
 
-            setMessage(
+            toast.success(
                 wordsList.length === 1
-                    ? "Word added successfully!"
-                    : `${wordsList.length} words added successfully!`
+                    ? "Word added successfully"
+                    : `${wordsList.length} words added successfully`
             );
+
+            setCachedWords(prev => {
+                const existing = new Set(prev.map(w => w.word));
+                const added = wordsList
+                    .filter(w => !existing.has(w))
+                    .map(w => ({ word: w }));
+
+                return [...prev, ...added];
+            });
 
             setForm({
                 words: "",
                 partOfSpeech: "",
+                meaning: "",
                 synonymReference: "",
                 antonymReference: ""
             });
         } catch (err) {
-            setError(err.message);
+            toast.error("Failed to add word");
         } finally {
             setLoading(false);
         }
@@ -95,19 +125,46 @@ export function AddWord() {
 
     return (
         <div className="bg-neutral-900 rounded-xl shadow-xl p-5 max-w-2xl mx-auto flex flex-col gap-4 border-2 border-neutral-700">
-           
+
             <h3 className="text-xl font-bold text-white text-center">Add Word(s)</h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
-                <textarea
-                    name="words"
-                    placeholder="Enter word(s) — comma or new line separated *"
-                    value={form.words}
-                    onChange={handleChange}
-                    rows={4}
-                    className="col-span-1 sm:col-span-2 w-full p-3 rounded-lg bg-neutral-800 text-white border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+
+                <div className="relative col-span-1 sm:col-span-2">
+                    <textarea
+                        name="words"
+                        placeholder="Enter word(s) — comma or new line separated *"
+                        value={form.words}
+                        rows={4}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setShowWordSuggestions(true);
+                        }}
+                        onBlur={() => setTimeout(() => setShowWordSuggestions(false), 150)}
+                        className="w-full p-3 rounded-lg bg-neutral-800 text-white border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    {/* Suggestions */}
+                    {showWordSuggestions && (
+                        <ul className="absolute z-20 w-full bg-neutral-800 border border-neutral-700 rounded-lg mt-1 max-h-40 overflow-y-auto">
+                            {getSuggestions(getLastToken(form.words)).map((w) => (
+                                <li
+                                    key={w.word}
+                                    className="px-3 py-2 hover:bg-neutral-700 cursor-pointer capitalize"
+                                    onMouseDown={() => {
+                                        setForm(f => ({
+                                            ...f,
+                                            words: replaceLastToken(f.words, w.word) + ", "
+                                        }));
+                                        setShowWordSuggestions(false);
+                                    }}
+                                >
+                                    {w.word}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
 
                 <input
                     name="partOfSpeech"
@@ -115,6 +172,15 @@ export function AddWord() {
                     value={form.partOfSpeech}
                     onChange={handleChange}
                     className="w-full p-3 rounded-lg bg-neutral-800 text-white border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <textarea
+                    name="meaning"
+                    placeholder="Meaning (shared by all synonyms)"
+                    value={form.meaning}
+                    onChange={handleChange}
+                    rows={3}
+                    className="col-span-1 sm:col-span-2 w-full p-3 rounded-lg bg-neutral-800 text-white border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
                 <div className="relative">
@@ -192,9 +258,6 @@ export function AddWord() {
                     "Add Word(s)"
                 )}
             </button>
-
-            {error && <p className="text-red-500 text-center mt-2">{error}</p>}
-            {message && <p className="text-green-500 text-center mt-2">{message}</p>}
         </div>
     );
 }

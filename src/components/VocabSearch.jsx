@@ -82,6 +82,7 @@ export default function VocabSearch() {
             const res = await fetch(`${BASE_URL}/words/revise`);
             const data = await res.json();
             setWordData(data);
+            console.log(data);
             setShowReviseModal(true);
         } catch (err) {
             console.error(err);

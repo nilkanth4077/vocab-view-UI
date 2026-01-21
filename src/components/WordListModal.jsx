@@ -6,7 +6,7 @@ export default function WordListModal({ open, onClose, loading }) {
     const [query, setQuery] = useState("");
     const [page, setPage] = useState(1);
 
-    const PAGE_SIZE = 8;
+    const PAGE_SIZE = 12;
 
     useEffect(() => {
         if (!open) return;
@@ -15,6 +15,7 @@ export default function WordListModal({ open, onClose, loading }) {
             .then(res => res.json())
             .then(data => setWords(data))
             .catch(() => setWords([]));
+        console.log(words);
     }, [open]);
 
     if (!open) return null;
@@ -59,24 +60,32 @@ export default function WordListModal({ open, onClose, loading }) {
 
                 {/* Table */}
                 {loading ? (
-                    <p className="text-center text-gray-400 mt-2">Loading...</p>
+                    <div className="flex flex-col items-center justify-center mt-4 gap-2">
+                        <p className="text-center text-gray-400 mt-2">
+                            Loading...
+                        </p>
+                    </div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-white border-collapse border border-rounded-xl border-neutral-600">
+                        <table className="w-full text-left text-white border-collapse border border-neutral-600">
                             <thead>
-                                <tr className="border-b border-neutral-700 bg-neutral-800">
-                                    <th className="py-2 px-3">Word</th>
-                                    <th className="py-2 px-3">POS</th>
+                                <tr className="bg-neutral-800">
+                                    <th className="py-2 px-3 border border-neutral-700">Word</th>
+                                    <th className="py-2 px-3 border border-neutral-700">Meaning</th>
+                                    <th className="py-2 px-3 border border-neutral-700">POS</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {paginated.map((w) => (
                                     <tr
                                         key={w.word}
-                                        className="border-b border-neutral-700 last:border-none hover:bg-neutral-800"
+                                        className="hover:bg-neutral-800"
                                     >
-                                        <td className="py-2 px-3 capitalize">{w.word}</td>
-                                        <td className="py-2 px-3 capitalize">{w.partOfSpeech || "-"}</td>
+                                        <td className="py-2 px-3 border border-neutral-700 capitalize">{w.word}</td>
+                                        <td className="py-2 px-3 border border-neutral-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-xs">
+                                            {w.meaning || "-"}
+                                        </td>
+                                        <td className="py-2 px-3 border border-neutral-700 capitalize">{w.partOfSpeech || "-"}</td>
                                     </tr>
                                 ))}
                             </tbody>
