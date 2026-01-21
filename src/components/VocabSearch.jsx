@@ -147,6 +147,9 @@ export default function VocabSearch() {
                 {/* Result */}
                 {result && (
                     <div className="mt-6 grid grid-cols-2 gap-4">
+                        <h3 className="text-lg italic font-light col-span-2 text-white capitalize">
+                            {result.meaning || "-"}
+                        </h3>
                         <Table title="Synonyms" data={result.synonyms} />
                         <Table title="Antonyms" data={result.antonyms} />
                     </div>

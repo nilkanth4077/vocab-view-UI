@@ -18,12 +18,13 @@ export default function ReviseModal({
                 </button>
 
                 <h2 className="text-2xl font-bold mb-2 text-white capitalize">
-                    {wordData.word}
+                    {wordData.word}{"  "}
+                    <span className="font-light italic text-xl">({wordData.partOfSpeech || "-"})</span>
                 </h2>
 
-                <p className="italic text-gray-300 mb-4 capitalize">
-                    {wordData.partOfSpeech || "-"}
-                </p>
+                <h4 className="text-gray-300 mb-4 capitalize">
+                    {wordData.meaning || "-"}
+                </h4>
 
                 <div className="grid grid-cols-2 gap-4">
                     {/* Synonyms */}
