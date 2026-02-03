@@ -4,6 +4,8 @@ import VocabSearch from "./components/VocabSearch";
 import VocabWords from "./components/VocabWords";
 import { Toaster } from "react-hot-toast";
 import { AddVocabWord } from "./components/AddVocabWord";
+import AddGrammarRule from "./components/AddGrammarRule";
+import GrammarRulesList from "./components/GrammarRulesList";
 
 function App() {
   const [activeTab, setActiveTab] = useState("list");
@@ -34,11 +36,11 @@ function App() {
           </div>
 
           <div
-            className={`flex-1 text-center py-2 cursor-pointer transition-colors duration-300 ${activeTab === "search" ? "text-white font-semibold" : "text-gray-400"
+            className={`flex-1 text-center py-2 cursor-pointer transition-colors duration-300 ${activeTab === "grammar" ? "text-white font-semibold" : "text-gray-400"
               }`}
-            onClick={() => setActiveTab("search")}
+            onClick={() => setActiveTab("grammar")}
           >
-            🔍 Search
+            🔍 Grammar
           </div>
 
           <div
@@ -56,7 +58,7 @@ function App() {
               transform:
                 activeTab === "list"
                   ? "translateX(0%)"
-                  : activeTab === "search"
+                  : activeTab === "grammar"
                     ? "translateX(100%)"
                     : "translateX(200%)",
             }}
@@ -66,8 +68,19 @@ function App() {
         {/* Content */}
         <div className="w-full max-w-2xl">
           {activeTab === "list" && <VocabWords />}
-          {activeTab === "search" && <VocabSearch />}
-          {activeTab === "add" && <AddVocabWord />}
+          {activeTab === "grammar" && <GrammarRulesList />}
+          {/* {activeTab === "search" && <VocabSearch />} */}
+          {activeTab === "add" && (
+            <div className="flex flex-col gap-6">
+              <AddVocabWord />
+              <div className="flex items-center gap-3">
+                <div className="flex-1 h-px bg-neutral-700" />
+                <span className="text-sm text-gray-400">Grammar</span>
+                <div className="flex-1 h-px bg-neutral-700" />
+              </div>
+              <AddGrammarRule />
+            </div>
+          )}
           {/* {activeTab === "add" && <AddWord />} */}
         </div>
       </div>
