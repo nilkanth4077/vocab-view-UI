@@ -74,7 +74,9 @@ export default function GrammarRulesList() {
                             </h3>
                             {r.category && (
                                 <span className="text-sm text-gray-400">
-                                    {r.category}
+                                    {r.description?.split(".").map((line, i) =>
+  line.trim() ? <p key={i}>{line.trim()}.</p> : null
+)}
                                 </span>
                             )}
                         </div>
