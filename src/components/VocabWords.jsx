@@ -7,6 +7,7 @@ export default function VocabWords() {
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [showFrequent, setShowFrequent] = useState(false);
 
     useEffect(() => {
         fetchWords();
@@ -50,15 +51,22 @@ export default function VocabWords() {
         }
     };
 
-    const filteredWords = words.filter(w =>
-        w.word.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredWords = Array.isArray(words)
+        ? words
+            .filter(w =>
+                w.word?.toLowerCase().includes(search.toLowerCase())
+            )
+            .filter(w =>
+                showFrequent ? w.isFrequent === true : true
+            )
+        : [];
 
     const suggestions =
         search.length > 0
             ? words.filter(w =>
-                w.word.toLowerCase().startsWith(search.toLowerCase()) &&
-                w.word.toLowerCase() !== search.toLowerCase()
+                w.word?.toLowerCase().startsWith(search.toLowerCase()) &&
+                w.word?.toLowerCase() !== search.toLowerCase() &&
+                (!showFrequent || w.isFrequent === true)
             )
             : [];
 
@@ -66,23 +74,15 @@ export default function VocabWords() {
         <div className="bg-neutral-800 rounded-xl shadow-lg p-5">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold mb-4">📚 All Vocabulary Words</h2>
-                <div className="mt-3 flex items-center gap-2">
-                    <input
-                        type="checkbox"
-                        name="isFrequent"
-                        checked={false}
-                        // onChange={(e) =>
-                        //     setForm({
-                        //         ...form,
-                        //         isFrequent: e.target.checked
-                        //     })
-                        // }
-                        className="w-4 h-4 accent-blue-500 cursor-pointer"
-                    />
-                    <label className="text-sm text-gray-400 cursor-pointer">
-                        Frequent
-                    </label>
-                </div>
+                <input
+                    type="checkbox"
+                    checked={showFrequent}
+                    onChange={(e) => setShowFrequent(e.target.checked)}
+                    className="w-4 h-4 accent-blue-500 cursor-pointer"
+                />
+                <label className="text-sm text-gray-400 cursor-pointer">
+                    Frequent
+                </label>
             </div>
 
             {loading && <p className="text-gray-400">Loading...</p>}
@@ -132,6 +132,11 @@ export default function VocabWords() {
                         <div className="flex justify-between items-center">
                             <h3 className="text-lg font-semibold text-blue-400 capitalize">
                                 {w.word}
+                                {w.isFrequent && (
+                                    <span className="ml-2 text-xs bg-blue-600 px-2 py-0.5 rounded">
+                                        Frequent
+                                    </span>
+                                )}
                             </h3>
                             <span className="text-sm text-gray-400 capitalize">
                                 {w.partOfSpeech}
