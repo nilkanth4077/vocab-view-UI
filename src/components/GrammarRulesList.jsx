@@ -12,11 +12,34 @@ export default function GrammarRulesList() {
     const fetchRules = async () => {
         try {
             setLoading(true);
+
+            const cached = JSON.parse(localStorage.getItem("grammarRules"));
+
+            // Show cached instantly
+            if (cached && Array.isArray(cached.data)) {
+                setRules(cached.data);
+            }
+
             const res = await fetch(`${BASE_URL}/grammar`);
-            const data = await res.json();
-            setRules(data);
+            const fresh = await res.json();
+
+            const newData = Array.isArray(fresh) ? fresh : [];
+
+            console.log("Fetched grammar rules:", newData);
+
+            // Always update (since no versioning)
+            setRules(newData);
+
+            localStorage.setItem(
+                "grammarRules",
+                JSON.stringify({
+                    data: newData
+                })
+            );
+
         } catch (err) {
             console.error(err);
+            setRules([]);
         } finally {
             setLoading(false);
         }
