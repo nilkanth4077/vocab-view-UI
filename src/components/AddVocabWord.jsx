@@ -55,6 +55,7 @@ export function AddVocabWord() {
 
             setForm({
                 word: "",
+                isFrequent: false,
                 partOfSpeech: "",
                 hindiMeaning: "",
                 englishMeaning: "",
@@ -86,6 +87,24 @@ export function AddVocabWord() {
                         placeholder="Enter word"
                         className="w-full mt-1 p-2 rounded-lg bg-neutral-900 border border-neutral-700 focus:ring-2 focus:ring-blue-500 outline-none"
                     />
+                </div>
+
+                <div className="mt-3 flex items-center gap-2">
+                    <input
+                        type="checkbox"
+                        name="isFrequent"
+                        checked={form.isFrequent || false}
+                        onChange={(e) =>
+                            setForm({
+                                ...form,
+                                isFrequent: e.target.checked
+                            })
+                        }
+                        className="w-4 h-4 accent-blue-500 cursor-pointer"
+                    />
+                    <label className="text-sm text-gray-400 cursor-pointer">
+                        Mark as Frequent
+                    </label>
                 </div>
 
                 {/* POS */}

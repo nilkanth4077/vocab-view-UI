@@ -15,11 +15,36 @@ export default function VocabWords() {
     const fetchWords = async () => {
         try {
             setLoading(true);
+
+            const cached = JSON.parse(localStorage.getItem("vocabWords"));
+
+            // ✅ 1. Show cached instantly
+            if (cached && Array.isArray(cached.data)) {
+                setWords(cached.data);
+                setLoading(false); // avoid loader flash
+            }
+
+            // ✅ 2. Fetch fresh data in background
             const res = await axios.get(BASE_URL + "/vocab");
-            console.log(res.data);
-            setWords(res.data);
+            const fresh = res.data;
+
+            const newData = Array.isArray(fresh) ? fresh : [];
+
+            console.log("Fetched vocab:", newData);
+
+            // ✅ 3. Update UI + cache
+            setWords(newData);
+
+            localStorage.setItem(
+                "vocabWords",
+                JSON.stringify({
+                    data: newData
+                })
+            );
+
         } catch (err) {
             console.error(err);
+            setWords([]); // fallback
         } finally {
             setLoading(false);
         }
@@ -39,7 +64,26 @@ export default function VocabWords() {
 
     return (
         <div className="bg-neutral-800 rounded-xl shadow-lg p-5">
-            <h2 className="text-xl font-bold mb-4">📚 All Vocabulary Words</h2>
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold mb-4">📚 All Vocabulary Words</h2>
+                <div className="mt-3 flex items-center gap-2">
+                    <input
+                        type="checkbox"
+                        name="isFrequent"
+                        checked={false}
+                        // onChange={(e) =>
+                        //     setForm({
+                        //         ...form,
+                        //         isFrequent: e.target.checked
+                        //     })
+                        // }
+                        className="w-4 h-4 accent-blue-500 cursor-pointer"
+                    />
+                    <label className="text-sm text-gray-400 cursor-pointer">
+                        Frequent
+                    </label>
+                </div>
+            </div>
 
             {loading && <p className="text-gray-400">Loading...</p>}
 
